@@ -5,9 +5,8 @@ import os
 from vertexai.generative_models import GenerativeModel
 from vertexai.tuning import sft
 
-# Solo establece manualmente la ruta en desarrollo si no está ya definida
-if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\juanp\inteArtificial\chatbotempresarial-28c80ef20f19.json"
+# Definir la variable de entorno para que Vertex AI la use automáticamente
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\juanp\inteArtificial\chatbotempresarial-28c80ef20f19.json"
 
 project_id = "348338715521"  # ID del proyecto
 region = "us-central1"  # Región donde está el trabajo de ajuste
