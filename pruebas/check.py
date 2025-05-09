@@ -2,7 +2,7 @@ from google import genai
 from google.genai import types
 import time
 
-client = genai.Client(api_key="AIzaSyDn9rLwtZX8rwTA004lC0oWPsSJvJeIEe4")
+client = genai.Client(api_key="api")
 
 for model_info in client.tunings.list():
-    print(model_info.name)
+    print(model_info.name)  
