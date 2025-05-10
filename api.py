@@ -57,10 +57,3 @@ def generate_text(request: promptRequest):
         return {"Grammi": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/Grammi2")
-async def grammi_route(request: Request):
-    data = await request.json()
-    print("✅ Recibido:", data)
-    return {"echo": data}
