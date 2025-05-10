@@ -23,8 +23,14 @@ tuning_job_id = "7050482678046392320"
 
 vertexai.init(project=project_id, location=region)
 
-sft_tuning_job = sft.SupervisedTuningJob(f"projects/{project_id}/locations/{region}/tuningJobs/{tuning_job_id}")
-tuned_model = GenerativeModel(sft_tuning_job.tuned_model_endpoint_name)
+
+try:
+    sft_tuning_job = sft.SupervisedTuningJob(f"projects/{project_id}/locations/{region}/tuningJobs/{tuning_job_id}")
+    tuned_model = GenerativeModel(sft_tuning_job.tuned_model_endpoint_name)
+except Exception as e:
+    print(f"Error cargando el modelo: {e}")
+    raise RuntimeError("Error cargando el modelo ajustado.")
+
 
 app = FastAPI()
 
@@ -39,6 +45,10 @@ app.add_middleware(
 
 class promptRequest(BaseModel):
     prompt: str
+
+@app.get("/")
+def health_check():
+    return {"status": "ok"}
 
 @app.post("/Grammi")
 def generate_text(request: promptRequest):
