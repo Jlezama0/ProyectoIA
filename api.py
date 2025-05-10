@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import vertexai
 import os
@@ -16,27 +17,33 @@ with open(creds_path, "w") as f:
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
 
 # Inicializamos Vertex AI
-project_id = "348338715521"  # ID del proyecto
-region = "us-central1"  # Región donde está el trabajo de ajuste
-tuning_job_id = "7050482678046392320"  # El ID del modelo ajustado
+project_id = "348338715521"
+region = "us-central1"
+tuning_job_id = "7050482678046392320"
 
 vertexai.init(project=project_id, location=region)
 
-# Se crea el objeto de trabajo de ajuste supervisado
 sft_tuning_job = sft.SupervisedTuningJob(f"projects/{project_id}/locations/{region}/tuningJobs/{tuning_job_id}")
-
-# Se obtiene el endpoint del modelo ajustado
 tuned_model = GenerativeModel(sft_tuning_job.tuned_model_endpoint_name)
 
 app = FastAPI()
 
+# 🔥 AÑADIR CORS MIDDLEWARE AQUÍ
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Cambia esto en producción
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class promptRequest(BaseModel):
-    prompt : str
+    prompt: str
 
 @app.post("/Grammi")
 def generate_text(request: promptRequest):
-    try: 
+    try:
         response = tuned_model.generate_content(request.prompt)
-        return{"Grammi": response.text}
+        return {"Grammi": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
