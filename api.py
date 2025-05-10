@@ -5,14 +5,21 @@ import os
 from vertexai.generative_models import GenerativeModel
 from vertexai.tuning import sft
 
-# Definir la variable de entorno para que Vertex AI la use automáticamente
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\juanp\inteArtificial\chatbotempresarial-28c80ef20f19.json"
+creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+if not creds_json:
+    raise RuntimeError("No se encontró GOOGLE_APPLICATION_CREDENTIALS_JSON en el entorno.")
 
+creds_path = '/tmp/chatbotempresarial-28c80ef20f19.json'
+with open(creds_path, "w") as f:
+    f.write(creds_json)
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
+
+# Inicializamos Vertex AI
 project_id = "348338715521"  # ID del proyecto
 region = "us-central1"  # Región donde está el trabajo de ajuste
 tuning_job_id = "7050482678046392320"  # El ID del modelo ajustado
 
-# Iniciar vertex AI
 vertexai.init(project=project_id, location=region)
 
 # Se crea el objeto de trabajo de ajuste supervisado
